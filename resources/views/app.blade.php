@@ -3,10 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    @vite('resources/js/app.js')
+    <link rel="icon" href="{{ asset('favicon.svg') }}">
+    @vite('resources/js/app.ts')
     @inertiaHead
 </head>
-<body class="h-screen bg-gradient-to-b from-purple-900 to-blue-950">
+<body>
 @inertia
 </body>
 </html>
