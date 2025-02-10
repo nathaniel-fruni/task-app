@@ -1,12 +1,14 @@
 <template>
-    <Head title=" | Domov" />
+    <Head title=" | Domov"/>
+
     <div
         class="flex flex-col gap-30 md:gap-50
-    lg:flex-row lg:justify-between">
+        lg:flex-row lg:justify-between mt-25">
         <div
             class="flex flex-col space-y-4">
             <h1
-                class="text-white uppercase lg:text-6xl/20 lg:w-2xl">
+                class="text-white uppercase lg:text-6xl/20 lg:w-2xl"
+            >
                 Manažment vašich úloh
             </h1>
             <p
@@ -20,15 +22,15 @@
                 w-fit px-8 py-3 rounded-2xl mt-4
                 bg-[#BAA0DD] shadow-[0_4px_14px_0_rgb(0,0,0,39%)]
                 text-[#2F2E41] text-center lg:text-lg font-semibold
-                transition duration-200 ease-linear">
+                transition duration-200 ease-linear hover:scale-105">
                 Plánovať úlohy
             </Link>
         </div>
 
         <img
             class="w-sm md:w-md lg:w-lg"
-             src="../assets/home-picture.svg"
-             alt="checklist"
+            src="../assets/home-picture.svg"
+            alt="checklist"
         >
     </div>
 </template>
