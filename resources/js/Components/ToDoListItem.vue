@@ -1,45 +1,22 @@
 <script setup lang="ts">
 import type {ToDoItem} from '../types/to-do-item'
 import {router} from '@inertiajs/vue3'
-import {useTaskStore} from '../stores/taskStore'
-import {ref} from 'vue'
+import {useStore} from '../stores/store'
 
-const taskStore = useTaskStore()
-const {markTaskAsComplete, setSelectedTask, deleteTask} = taskStore
+const store = useStore()
+const {setSelectedTask} = store
 
 const props = defineProps<{
     task: ToDoItem
 }>()
 
-const displayErrorMessage = ref<boolean>(false)
-
-const handleCheck = (task: ToDoItem): void => {
-    const completed = !task.completed
-    router.patch(
-        `/tasks/${task.id}`,
-        {completed},
-        {
-            onSuccess: () => markTaskAsComplete(task, completed)
-        }
-    )
+const markTaskAsCompleted = (id: number, completed: boolean): void => {
+    router.patch(`/tasks/${id}`, {completed})
 }
 
 const handleEditToggle = (): void => setSelectedTask(props.task)
 
-const handleDelete = (task: ToDoItem): void => {
-    router.delete(
-        `/tasks/${task.id}`,
-        {
-            onSuccess: () => deleteTask(task),
-            onError: () => {
-                displayErrorMessage.value = true
-                setTimeout(() => {
-                    displayErrorMessage.value = false
-                }, 3000)
-            }
-        }
-    )
-}
+const deleteTask = (id: number) => router.delete(`/tasks/${id}`)
 </script>
 
 <template>
@@ -50,7 +27,7 @@ const handleDelete = (task: ToDoItem): void => {
                 <label class="flex items-center cursor-pointer relative">
                     <input type="checkbox"
                            :checked="task.completed"
-                           @change="handleCheck(task)"
+                           @change="markTaskAsCompleted(task.id, !task.completed)"
                            class="peer h-6 w-6 cursor-pointer transition-all
                            appearance-none rounded-full bg-slate-100 shadow hover:shadow-md border border-slate-300
                            checked:bg-[#2F2E41] checked:border-[#2F2E41] "
@@ -63,7 +40,7 @@ const handleDelete = (task: ToDoItem): void => {
                     </span>
                 </label>
             </div>
-            <div class="flex-1 min-w-0" @click="handleCheck(task)">
+            <div class="flex-1 min-w-0" @click="markTaskAsCompleted(task.id, !task.completed)">
                 <p class="text-lg font-medium truncate"
                    :class="task.completed ? 'line-through text-[#BAA0DD]' : 'text-white'"
                 >
@@ -81,9 +58,8 @@ const handleDelete = (task: ToDoItem): void => {
             ></i>
             <i class="fa-solid fa-trash-can cursor-pointer
                       text-white hover:shadow-[0_6px_20px_rgba(255,255,255,23%)]"
-               @click="handleDelete(task)"
+               @click="deleteTask(task.id)"
             ></i>
         </div>
-        <div v-if="displayErrorMessage" class="text-red-400 text-sm">Nepodarilo sa vymazať</div>
     </li>
 </template>

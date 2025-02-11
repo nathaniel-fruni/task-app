@@ -16,9 +16,9 @@ class TaskController extends Controller
         return Inertia::render('Tasks', ['tasks' => Task::all(),]);
     }
 
-    public function store(Request $request): Response
+    public function store(Request $request): RedirectResponse
     {
-        $task = Task::create($request->validate([
+        Task::create($request->validate([
             'name' => ['required', 'max:50'],
             'description' => ['max:255'],
         ], [
@@ -27,10 +27,10 @@ class TaskController extends Controller
             'description.max' => 'Popis úlohy nesmie mať viac ako 255 znakov.',
         ]));
 
-        return Inertia::render('Tasks', ['newTask' => $task]);
+        return to_route('tasks.index');
     }
 
-    public function update(Request $request, int $id): Response
+    public function update(Request $request, int $id): RedirectResponse
     {
         $task = Task::findOrFail($id);
 
@@ -43,7 +43,7 @@ class TaskController extends Controller
             'description.max' => 'Popis úlohy nesmie mať viac ako 255 znakov.',
         ]));
 
-        return Inertia::render('Tasks', ['updatedTask' => $task]);
+        return to_route('tasks.index');
     }
 
     public function updateCompletion(Request $request, int $id): RedirectResponse
@@ -52,7 +52,6 @@ class TaskController extends Controller
 
         $task->update($request->validate([
             'completed' => ['required', 'boolean'],
-            ['completed.required' => 'Chýba informácia o stave úlohy.']
         ]));
 
         return to_route('tasks.index');

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import {useTaskStore} from '../stores/taskStore'
+import {useStore} from '../stores/store'
 import {useForm} from '@inertiajs/vue3'
 import {watch} from 'vue'
-import {storeToRefs} from 'pinia';
+import {storeToRefs} from 'pinia'
+import {ToDoItem} from '../types/to-do-item'
 
-const taskStore = useTaskStore()
-const {selectedTask, displayTaskForm} = storeToRefs(taskStore)
-const {toggleForm, updateTask, addTask} = taskStore
+const store = useStore()
+const {selectedTask, displayTaskForm} = storeToRefs(store)
+const {toggleForm} = store
 
 const form = useForm({
     name: selectedTask.value?.name || "",
@@ -15,49 +16,60 @@ const form = useForm({
 
 watch(() => selectedTask.value, (newTask) => {
     if (newTask) {
-        form.name = newTask.name;
-        form.description = newTask.description;
+        updateFormWithTask(newTask)
     } else {
-        form.name = "";
-        form.description = "";
+        resetForm()
     }
 })
 
+const updateFormWithTask = (task: ToDoItem): void => {
+    form.name = task.name
+    form.description = task.description
+}
+
+const resetForm = (): void => {
+    form.reset()
+}
+
 const submit = (): void => {
-    if (validateForm()) {
-        if (selectedTask.value) {
-            form.put(
-                `/tasks/${selectedTask.value.id}`, {
-                    onSuccess: (response) => handleSuccess("edit", response.props.updatedTask),
-                    onError: (error) => console.log(error),
-                })
-        } else {
-            form.post(
-                '/tasks', {
-                    onSuccess: (response) => handleSuccess("add", response.props.newTask),
-                    onError: (error) => console.log(error),
-                })
-        }
+    if (isFormValid()) {
+        handleTaskRequest()
     } else {
-        form.setError({
-            name: '',
-            description: 'Popis je príliš dlhý.',
-        })
+        setDescriptionError()
     }
 }
 
-const validateForm = (): boolean => {
+const isFormValid = (): boolean => {
     return form.description.length < 255
 }
 
-const handleSuccess = (action: string, task: any): void => {
-    if (action === "edit") {
-        updateTask(task)
+const handleTaskRequest = (): void => {
+    if (selectedTask.value) {
+        updateTask()
     } else {
-        addTask(task)
+        createTask()
     }
+}
+
+const updateTask = (): void => {
+    form.put(`/tasks/${selectedTask.value.id}`, {
+        onSuccess: () => handleSuccess()
+    })
+}
+
+const createTask = (): void => {
+    form.post('/tasks', {
+        onSuccess: () => handleSuccess()
+    })
+}
+
+const setDescriptionError = (): void => {
+    form.setError('description', 'Popis je príliš dlhý.')
+}
+
+const handleSuccess = (): void => {
     toggleForm()
-    form.reset()
+    resetForm()
 }
 </script>
 
@@ -69,7 +81,7 @@ const handleSuccess = (action: string, task: any): void => {
         <h1 class="font-bold text-xl">Nová úloha</h1>
         <div class="space-y-3">
             <div class="relative">
-                <input type="text" name="name" v-model="form.name" required
+                <input type="text" id="name" name="name" v-model="form.name" required
                        class="peer py-3 pe-0 block w-full
                               bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200
                               text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-gray-400 focus:ring-0
@@ -79,7 +91,7 @@ const handleSuccess = (action: string, task: any): void => {
                 <div class="text-red-400 text-xs mt-2" v-if="form.errors.name">{{ form.errors.name }}</div>
             </div>
             <div class="relative">
-                <textarea name="description" v-model="form.description" rows="3"
+                <textarea id="description" name="description" v-model="form.description" rows="3"
                           class="peer py-3 pe-0 block w-full
                                  bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200
                                  text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-gray-400 focus:ring-0

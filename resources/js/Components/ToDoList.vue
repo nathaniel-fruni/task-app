@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import {useTaskStore} from '../stores/taskStore'
-import {computed, ref} from "vue"
-import {storeToRefs} from "pinia";
-import {ToDoItem} from "../types/to-do-item";
+import {computed, ref} from 'vue'
+import {ToDoItem} from '../types/to-do-item'
 import ToDoListItem from './ToDoListItem.vue'
 
-const taskStore = useTaskStore()
-const {tasks} = storeToRefs(taskStore)
+const props = defineProps<{
+    tasks: ToDoItem[]
+}>()
 
-const filters: { name: string; label: string }[] = [
-    {name: 'all', label: 'Všetky'},
-    {name: 'todo', label: 'Nespravené'},
-    {name: 'done', label: 'Spravené'}
-]
-const filterFunctions: Record<string, (task: ToDoItem) => boolean> = {
-    all: () => true,
-    todo: (task) => !task.completed,
-    done: (task) => task.completed
+enum TaskFilter {
+    All = 'all',
+    Todo = 'todo',
+    Done = 'done'
 }
 
-const taskFilter = ref<string>('all')
-const filteredTasks = computed(() => tasks.value.filter(filterFunctions[taskFilter.value]))
+const filters: { name: TaskFilter; label: string }[] = [
+    {name: TaskFilter.All, label: 'Všetky'},
+    {name: TaskFilter.Todo, label: 'Nespravené'},
+    {name: TaskFilter.Done, label: 'Spravené'}
+]
+const filterFunctions: Record<TaskFilter, (task: ToDoItem) => boolean> = {
+    [TaskFilter.All]: () => true,
+    [TaskFilter.Todo]: (task) => !task.completed,
+    [TaskFilter.Done]: (task) => task.completed
+}
+
+const taskFilter = ref<TaskFilter>(TaskFilter.All)
+const filteredTasks = computed(() => props.tasks.filter(filterFunctions[taskFilter.value]))
 </script>
 
 <template>

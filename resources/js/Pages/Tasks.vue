@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import {useTaskStore} from '../stores/taskStore'
+import {useStore} from '../stores/store'
 import {storeToRefs} from 'pinia'
-import {onMounted} from "vue";
 import type {ToDoItem} from '../types/to-do-item'
 import ToDoList from '@/Components/ToDoList.vue'
 import Form from '@/Components/Form.vue'
 
-const taskStore = useTaskStore()
-const {tasks, displayTaskForm} = storeToRefs(taskStore)
-const {toggleForm} = taskStore
+const store = useStore()
+const {displayTaskForm} = storeToRefs(store)
+const {toggleForm} = store
 
 const props = defineProps<{
     tasks: ToDoItem[]
 }>()
-
-onMounted(() => {
-    tasks.value = props.tasks
-})
 </script>
 
 <template>
@@ -27,7 +22,7 @@ onMounted(() => {
             class="w-1/2 h-full p-10 bg-[#7F7BAC]/50
             flex flex-col items-center justify-between rounded-2xl shadow-lg"
         >
-            <ToDoList/>
+            <ToDoList :tasks="props.tasks"/>
             <button
                 type="button"
                 class="hover:shadow-[0_6px_20px_rgba(255,255,255,23%)]
