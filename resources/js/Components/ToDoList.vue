@@ -30,11 +30,13 @@ const filteredTasks = computed(() => props.tasks.filter(filterFunctions[taskFilt
 
 <template>
     <div>
-        <h1 class="text-white text-center text-2xl font-semibold p-2">
+        <h1 class="p-2 font-semibold text-white text-center text-xl  md:text-2xl">
             <i class="fa-solid fa-bars mr-2"></i>
             Zoznam úloh
         </h1>
-        <div class="text-lg text-white w-100 flex justify-between p-3">
+        <div class="w-xs flex justify-evenly p-3 mb-2
+                    text-white text-sm md:text-lg lg:w-md"
+        >
             <p
                 v-for="filter in filters"
                 :key="filter.name"
@@ -47,8 +49,11 @@ const filteredTasks = computed(() => props.tasks.filter(filterFunctions[taskFilt
     </div>
 
     <ul v-if="filteredTasks.length > 0"
-        class="max-w-md h-320 pr-6 divide-y divide-gray-200 dark:divide-gray-700
-               overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2
+        class="w-xs h-320 px-14 lg:w-md lg:px-0
+               divide-y divide-gray-200 dark:divide-gray-700
+               text-xs lg:text-lg
+               overflow-y-auto overflow-x-hidden
+               [&::-webkit-scrollbar]:w-2
                [&::-webkit-scrollbar-track]:rounded-full
                [&::-webkit-scrollbar-track]:bg-gray-400
                [&::-webkit-scrollbar-thumb]:rounded-full
@@ -60,5 +65,5 @@ const filteredTasks = computed(() => props.tasks.filter(filterFunctions[taskFilt
             :task="task"
         />
     </ul>
-    <h1 v-else class="text-white text-xl font-semibold p-3">Nemáte žiadne úlohy</h1>
+    <h1 v-else class="p-3 font-semibold text-white text-md md:text-xl">Nemáte žiadne úlohy</h1>
 </template>

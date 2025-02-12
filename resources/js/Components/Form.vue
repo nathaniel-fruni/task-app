@@ -52,7 +52,7 @@ const handleTaskRequest = (): void => {
 }
 
 const updateTask = (): void => {
-    form.put(`/tasks/${selectedTask.value.id}`, {
+    form.put(`/tasks/${selectedTask.value?.id}`, {
         onSuccess: () => handleSuccess()
     })
 }
@@ -75,7 +75,8 @@ const handleSuccess = (): void => {
 
 <template>
     <form v-if="displayTaskForm"
-          class="w-1/4 p-10 space-y-2 bg-[#7F7BAC]/50 rounded-2xl text-white text-lg h-fit"
+          class="h-fit w-full lg:w-1/4 p-10 space-y-2
+          bg-[#7F7BAC]/50 rounded-2xl text-white text-lg"
           @submit.prevent="submit"
     >
         <h1 class="font-bold text-xl">Nová úloha</h1>
@@ -94,19 +95,21 @@ const handleSuccess = (): void => {
                 <textarea id="description" name="description" v-model="form.description" rows="3"
                           class="peer py-3 pe-0 block w-full
                                  bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200
-                                 text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-gray-400 focus:ring-0
+                                 text-sm text-gray-200 focus:border-t-transparent focus:border-x-transparent focus:border-b-gray-400 focus:ring-0
                                  disabled:opacity-50 disabled:pointer-events-none outline-none"
                           placeholder="Popis">
                 </textarea>
-                <div class="text-red-400 text-xs mt-2" v-if="form.errors.description">{{
+                <div class="mt-2 text-red-400 text-xs" v-if="form.errors.description">{{
                         form.errors.description
                     }}
                 </div>
             </div>
         </div>
         <button type="submit"
-                class="hover:shadow-[0_6px_20px_rgba(255,255,255,23%)] w-fit px-8 py-1 rounded-2xl mt-3 cursor-pointer
-                       bg-[#BAA0DD] shadow-[0_4px_14px_0_rgb(0,0,0,39%)] text-white text-center lg:text-md font-semibold
+                class="w-fit px-8 py-1 mt-3 cursor-pointer
+                       hover:shadow-[0_6px_20px_rgba(255,255,255,23%)] rounded-2xl
+                       bg-[#BAA0DD] shadow-[0_4px_14px_0_rgb(0,0,0,39%)]
+                       font-semibold text-white text-center lg:text-md
                        transition duration-200 ease-linear1 hover:scale-105">
             <i class="fa-solid fa-check"></i>
         </button>
